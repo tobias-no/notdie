@@ -90,3 +90,4 @@ ENV/
 
 *.xml
 *.swp
+source_path.py

@@ -3,7 +3,13 @@
 
 import xml.etree.ElementTree as et
 import time
+import urllib2
 from datetime import datetime
+
+#import as global variable 
+#protect source path to be pushed on github
+#disclaimer for data source can be found there
+from source_path import source_path 
 
 
 class XMLEx(object):
@@ -42,11 +48,27 @@ class XMLEx(object):
         print to_sec, to_date, to_sec - seconds
 
 
+    def get_online_data(self):
+        xml_file = "nodie.xml"
+        for zz in range(10):
+            try:
+                stream = urllib2.urlopen(source_path)
+                if stream.msg == 'OK':
+                    with open(xml_file, "w") as f:
+                        f.write(stream.read())
+                    stream.close()
+                    return True
+            except BaseException as e:
+                print zz, "xml retrieval from online source failed:", e, "...retry"
+                time.sleep(2)
+                if zz == 9:
+                    return False
 
 
 if __name__ == "__main__":
-    path_to_xmlfile = "nodi.xml"
+    path_to_xmlfile = "nodie.xml"
     test = XMLEx()
+    print test.get_online_data()
     test.get_entries(path_to_xmlfile)
 
 
