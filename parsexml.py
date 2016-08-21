@@ -44,14 +44,38 @@ class XMLEx(object):
         to_date= datetime.strptime(root[3][2][2].text[:19], '%Y-%m-%dT%H:%M:%S')
         from_sec = float(datetime.strftime(from_date, '%s.%f'))
         to_sec = float(datetime.strftime(to_date, '%s.%f'))
-        print from_sec, from_date, from_sec - seconds
-        print to_sec, to_date, to_sec - seconds
+        print "blub", from_sec, from_date, from_sec - seconds
+        print "lbub", to_sec, to_date, to_sec - seconds
+
+    def entry_iter(self, xmlfile):
+        self.entry_dict = dict()
+        tree = et.parse(xmlfile)
+        root = tree.getroot()
+        for entry in root.iter("entry"):
+            self.entry_dict[entry[0].text] = {}
+            for i in range(1, len(entry)):
+                self.entry_dict[entry[0].text][entry[i].tag] = entry[i].text
+        #print root[1].tag, root[1].text
+        #print self.entry_dict
+
+    def convert_to_sec(self, input_time, src_format):
+        return float(datetime.strftime(datetime.strptime(input_time, src_format), '%s.%f'))
+
+
+    def filter_dict(self):
+        now_sec = float(datetime.strftime(datetime.now(), '%s.%f'))
+        for k, v in self.entry_dict.items():
+            print v['name'], v['from'][:19], v['to'][:19]
+            from_sec = self.convert_to_sec(v['from'][:19], '%Y-%m-%dT%H:%M:%S')
+            to_sec = self.convert_to_sec(v['to'][:19], '%Y-%m-%dT%H:%M:%S')
+            print v['name'], from_sec, to_sec, now_sec - from_sec, now_sec - to_sec
+        print v.keys()
 
 
     def get_online_data(self):
         xml_file = "nodie.xml"
         for zz in range(10):
-            try:
+            try:#
                 stream = urllib2.urlopen(source_path)
                 if stream.msg == 'OK':
                     with open(xml_file, "w") as f:
@@ -68,7 +92,9 @@ class XMLEx(object):
 if __name__ == "__main__":
     path_to_xmlfile = "nodie.xml"
     test = XMLEx()
-    print test.get_online_data()
-    test.get_entries(path_to_xmlfile)
+    #print test.get_online_data()
+    test.entry_iter(path_to_xmlfile)
+    test.filter_dict()
+    #test.get_entries(path_to_xmlfile)
 
 
