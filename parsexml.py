@@ -52,24 +52,41 @@ class XMLEx(object):
         tree = et.parse(xmlfile)
         root = tree.getroot()
         for entry in root.iter("entry"):
-            self.entry_dict[entry[0].text] = {}
+            self.entry_dict[(entry[1].text[:19], entry[0].text)] = {}
             for i in range(1, len(entry)):
-                self.entry_dict[entry[0].text][entry[i].tag] = entry[i].text
-        #print root[1].tag, root[1].text
-        #print self.entry_dict
+                self.entry_dict[(entry[1].text[:19], entry[0].text)][entry[i].tag] = entry[i].text
 
+            from_sec = self.convert_to_sec(self.entry_dict[(entry[1].text[:19], entry[0].text)]['from'][:19], '%Y-%m-%dT%H:%M:%S')
+            to_sec = self.convert_to_sec(self.entry_dict[(entry[1].text[:19], entry[0].text)]['to'][:19], '%Y-%m-%dT%H:%M:%S')
+
+            self.entry_dict[(entry[1].text[:19], entry[0].text)]['from_sec'] = from_sec
+            self.entry_dict[(entry[1].text[:19], entry[0].text)]['to_sec'] = to_sec
+
+        self.update_diffsec()
+
+
+    def update_diffsec(self):
+        now_sec = float(datetime.strftime(datetime.now(), '%s.%f'))
+        for k, v in self.entry_dict.items():
+            v['diff_from'] = now_sec - v['from_sec']
+            v['diff_to'] = now_sec - v['to_sec']
+
+    
     def convert_to_sec(self, input_time, src_format):
         return float(datetime.strftime(datetime.strptime(input_time, src_format), '%s.%f'))
 
 
     def filter_dict(self):
         now_sec = float(datetime.strftime(datetime.now(), '%s.%f'))
+        apo_list = []
         for k, v in self.entry_dict.items():
             print v['name'], v['from'][:19], v['to'][:19]
             from_sec = self.convert_to_sec(v['from'][:19], '%Y-%m-%dT%H:%M:%S')
             to_sec = self.convert_to_sec(v['to'][:19], '%Y-%m-%dT%H:%M:%S')
-            print v['name'], from_sec, to_sec, now_sec - from_sec, now_sec - to_sec
+            #print v['name'], from_sec, to_sec, now_sec - from_sec, now_sec - to_sec
+            apo_list.append([now_sec - from_sec, now_sec - to_sec, v['name']])
         print v.keys()
+        print sorted(apo_list)
 
 
     def get_online_data(self):
@@ -94,7 +111,8 @@ if __name__ == "__main__":
     test = XMLEx()
     #print test.get_online_data()
     test.entry_iter(path_to_xmlfile)
-    test.filter_dict()
+    print test.entry_dict
+    #test.filter_dict()
     #test.get_entries(path_to_xmlfile)
 
 
