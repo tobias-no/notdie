@@ -62,12 +62,28 @@ class XMLEx(object):
                 phs.append(k)
         return phs
 
+    def get_xmlstatus(self):
+        if len(self.get_phs(12*24)) > 0: 
+            return 0 #green
+        elif len(self.get_phs(9*24)) > 0:
+            return 1 #green-yellow
+        elif len(self.get_phs(6*24)) > 0:
+            return 2 #yellow
+        elif len(self.get_phs(3*24)) > 0:
+            return 4 #yellow-red
+        else:
+            return 8 #red
+
+
 if __name__ == "__main__":
     path_to_xmlfile = "nodie.xml"
     test = XMLEx()
     #print test.get_online_data()
     test.entry_iter(path_to_xmlfile)
     #print test.entry_dict
-    print test.get_phs()
+    for ph in test.get_phs():
+        print ph, test.entry_dict[ph]['name']
+    print test.get_xmlstatus()
+
 
 
