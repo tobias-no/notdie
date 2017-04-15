@@ -37,8 +37,7 @@ class XMLEx(object):
     def convert_to_sec(self, input_time, src_format):
         return float(datetime.strftime(datetime.strptime(input_time, src_format), '%s.%f'))
 
-    def get_online_data(self):
-        xml_file = "nodie.xml"
+    def get_online_data(self, xml_file="nodie.xml"):
         for zz in range(10):
             try:
                 stream = urllib2.urlopen(source_path)
@@ -78,10 +77,10 @@ class XMLEx(object):
 if __name__ == "__main__":
     path_to_xmlfile = "nodie.xml"
     test = XMLEx()
-    #print test.get_online_data()
+    print test.get_online_data(path_to_xmlfile)
     test.entry_iter(path_to_xmlfile)
     #print test.entry_dict
-    for ph in test.get_phs():
+    for ph in test.get_phs(offset_h=0):
         print ph, test.entry_dict[ph]['name']
     print test.get_xmlstatus()
 
