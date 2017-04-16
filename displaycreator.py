@@ -57,7 +57,7 @@ class DisplayCreator(object):
 
         try:
             pygame.image.save(self.window, "/ram/tmp.bmp")
-            putiton("ram/tmp.bmp")
+            putiton("/ram/tmp.bmp")
             time.sleep(4)
         except BaseException as e:
             print("{}: Not running on RPi? -> saving bmp in current folder".format(e))
