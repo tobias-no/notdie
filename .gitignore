@@ -89,5 +89,12 @@ ENV/
 .ropeproject
 
 *.xml
+*.json
 *.swp
+*.bmp
+
+test_*
+
+notdie_pid.txt
 source_path.py
+
