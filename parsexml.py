@@ -13,7 +13,8 @@ from source_path import source_path
 
 
 class XMLEx(object):
-    def entry_iter(self, xmlfile):
+    #def entry_iter(self, xmlfile):
+    def __init__(self, xmlfile):
         self.entry_dict = dict()
         tree = et.parse(xmlfile)
         root = tree.getroot()
@@ -24,8 +25,12 @@ class XMLEx(object):
 
             from_sec = self.convert_to_sec(self.entry_dict[(entry[1].text[:19], entry[0].text)]['from'][:19], '%Y-%m-%dT%H:%M:%S')
             to_sec = self.convert_to_sec(self.entry_dict[(entry[1].text[:19], entry[0].text)]['to'][:19], '%Y-%m-%dT%H:%M:%S')
+            from_date = self.entry_dict[(entry[1].text[:19], entry[0].text)]['from'][:10]
+            to_date = self.entry_dict[(entry[1].text[:19], entry[0].text)]['to'][:10]
             self.entry_dict[(entry[1].text[:19], entry[0].text)]['from_sec'] = from_sec
+            self.entry_dict[(entry[1].text[:19], entry[0].text)]['from_date'] = from_date
             self.entry_dict[(entry[1].text[:19], entry[0].text)]['to_sec'] = to_sec
+            self.entry_dict[(entry[1].text[:19], entry[0].text)]['to_date'] = to_date
         self.update_diffsec()
 
     def update_diffsec(self):
@@ -48,7 +53,7 @@ class XMLEx(object):
                     return True
             except BaseException as e:
                 print zz, "xml retrieval from online source failed:", e, "...retry"
-                time.sleep(2)
+                #time.sleep(2)
                 if zz == 9:
                     return False
 
@@ -59,7 +64,12 @@ class XMLEx(object):
         for k, v in self.entry_dict.items():
             if (v['diff_from']+offset_sec > 0) and (v['diff_to']+offset_sec < 0):
                 phs.append(k)
+        if len(phs) == 0:
+            print("Please update xml source file by connecting to the Internet")
+            sys.exit(-1)
+
         return phs
+
 
     def get_xmlstatus(self):
         if len(self.get_phs(12*24)) > 0: 
@@ -76,9 +86,8 @@ class XMLEx(object):
 
 if __name__ == "__main__":
     path_to_xmlfile = "nodie.xml"
-    test = XMLEx()
+    test = XMLEx(path_to_xmlfile)
     print test.get_online_data(path_to_xmlfile)
-    test.entry_iter(path_to_xmlfile)
     #print test.entry_dict
     for ph in test.get_phs(offset_h=0):
         print ph, test.entry_dict[ph]['name']
