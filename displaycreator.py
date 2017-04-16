@@ -10,9 +10,8 @@ import json
 
 from parsexml import XMLEx
 from datetime import date
-from source_path import tft_init_func, putiton
+from source_path import tft_init_func, putiton, path_to_xmlfile
 
-path_to_xmlfile = "nodie.xml"
 
 class DisplayCreator(object):
     def __init__(self):
