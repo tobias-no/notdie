@@ -10,7 +10,7 @@ import json
 
 from parsexml import XMLEx
 from datetime import date
-from source_path import tft_init_func, putiton, path_to_xmlfile
+from source_path import tft_init_func, putiton, path_to_xmlfile, pidpath
 
 
 class DisplayCreator(object):
@@ -67,7 +67,7 @@ class DisplayCreator(object):
     def hamster_wheel(self, update=True):
         xe = XMLEx(path_to_xmlfile)
         if update:
-            print(xe.get_online_data())
+            print(xe.get_online_data(path_to_xmlfile))
         for k in xe.get_phs(offset_h=0):
             self.create_bmp(xe.entry_dict, k, True) 
 
@@ -81,7 +81,7 @@ class DisplayCreator(object):
 
 
 if __name__ == "__main__":
-    with open("notdie_pid.txt", 'w') as pidfile:
+    with open(pidpath, 'w') as pidfile:
         pidfile.write(str(os.getpid()))
     dc = DisplayCreator()
     dc.hamster_wheel(True) #first run should always update

@@ -4,6 +4,7 @@
 import xml.etree.ElementTree as et
 import time
 import urllib2
+import os
 from datetime import datetime
 
 #import as global variable 
@@ -15,6 +16,12 @@ from source_path import source_path
 class XMLEx(object):
     #def entry_iter(self, xmlfile):
     def __init__(self, xmlfile):
+        if not os.path.exists(xmlfile):
+            try:
+                self.get_online_data(xmlfile)
+            except BaseException as e:
+                print("{} no prexisting xml file - online reieval also failed".format(e))
+                sys.exit(-1)
         self.entry_dict = dict()
         tree = et.parse(xmlfile)
         root = tree.getroot()
@@ -42,7 +49,7 @@ class XMLEx(object):
     def convert_to_sec(self, input_time, src_format):
         return float(datetime.strftime(datetime.strptime(input_time, src_format), '%s.%f'))
 
-    def get_online_data(self, xml_file="nodie.xml"):
+    def get_online_data(self, xml_file):
         for zz in range(10):
             try:
                 stream = urllib2.urlopen(source_path)
