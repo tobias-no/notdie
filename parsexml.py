@@ -5,6 +5,7 @@ import xml.etree.ElementTree as et
 import time
 import urllib2
 import os
+import sys
 from datetime import datetime
 
 #import as global variable 

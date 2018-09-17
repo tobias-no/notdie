@@ -96,5 +96,5 @@ ENV/
 test_*
 
 notdie_pid.txt
-source_path.py
+source_path.py*
 
